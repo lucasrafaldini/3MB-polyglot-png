@@ -1,13 +1,14 @@
-# [3MB-polyglot-png](https://github.com/DavidBuchanan314/tweetable-polyglot-png)
-Pack up to 3MB of data into a tweetable PNG polyglot file.
+# [3MB-polyglot-png](https://github.com/lucasrafaldini/3MB-polyglot-png)
+Pack up to 3MB of data into a **tweetable** PNG polyglot file.
 
-See it in action here: https://twitter.com/David3141593/status/1371974874856587268
 
-## How?
+## Why use that?
 
 Twitter strips unnecessary data from PNG uploads, however, they do not strip
 trailing data from the DEFLATE stream inside the IDAT chunk, provided that the
 overall image file meets the requirements to avoid being re-encoded.
+
+Basically, you can turn your .zip .pdf or .mp3 file into an image to hide its content.
 
 ## Why?
 
