@@ -14,8 +14,8 @@ class ImagePack:
 		self.content = content
 		self.output = output
 
-	#this function is gross
-	def fixup_zip(self, data, start_offset):
+
+	def _fixup_zip(self, data, start_offset):
 
 		# find the "end of central directory" marker
 		end_central_dir_offset = data.rindex(b"PK\x05\x06")
@@ -47,8 +47,11 @@ class ImagePack:
 		# check the PNG magic is present in the input file, and write it to the output file
 		png_header = png_in.read(len(self.PNG_MAGIC))
 		assert(png_header == self.PNG_MAGIC)
+		print("PNG header is valid.")
+		logger.info("PNG header is valid.")
 		png_out.write(png_header)
 
+		# What exactly is this?
 		idat_body = b""
 
 		# iterate through the chunks of the PNG file
@@ -61,12 +64,14 @@ class ImagePack:
 			
 			# if it's a non-essential chunk, skip over it
 			if chunk_type not in [b"IHDR", b"PLTE", b"IDAT", b"IEND"]:
+				print("Warning: dropping non-essential or unknown chunk: {}".format(chunk_type.decode()))
 				logger.warning("Warning: dropping non-essential or unknown chunk: {}".format(chunk_type.decode()))
 				continue
 			
 			# take note of the image width and height, for future calculations
 			if chunk_type == b"IHDR":
 				width, height = unpack_from(">II", chunk_body)
+				print(f"Image size: {width}x{height}px")
 				logger.info(f"Image size: {width}x{height}px")
 			
 			# There might be multiple IDAT chunks, we will concatenate their contents
@@ -80,7 +85,8 @@ class ImagePack:
 			if chunk_type == b"IEND":
 				start_offset = png_out.tell()+8+len(idat_body)
 				print("Embedded file starts at offset", hex(start_offset))
-				
+				logger.info(f"Embedded file starts at offset hex(start_offset)")
+
 				# concatenate our content that we want to embed
 				idat_body += content_in.read()
 				
@@ -90,8 +96,9 @@ class ImagePack:
 				# if its a zip file, fix the offsets
 				if sys.argv[2].endswith(".zip"):
 					print("Fixing up zip offsets...")
+					logger.info("Fixing up zip offsets...")
 					idat_body = bytearray(idat_body)
-					self.fixup_zip(idat_body, start_offset)
+					self._fixup_zip(idat_body, start_offset)
 				
 				# write the IDAT chunk
 				png_out.write(len(idat_body).to_bytes(4, "big"))
