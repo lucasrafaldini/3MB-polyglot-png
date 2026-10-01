@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polyglot-png"
+version = "1.0.0"
+description = "Pack up to 3MB of arbitrary data into a tweetable PNG polyglot file."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [{ name = "Lucas Rafaldini" }]
+keywords = ["png", "polyglot", "steganography", "security", "hacktoberfest"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Multimedia :: Graphics",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/lucasrafaldini/3MB-polyglot-png"
+Repository = "https://github.com/lucasrafaldini/3MB-polyglot-png"
+Issues = "https://github.com/lucasrafaldini/3MB-polyglot-png/issues"
+
+[project.scripts]
+polyglot-png = "polyglot_png.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.1.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+# Keep typing.Union / Optional: the project supports Python 3.8 where some of
+# these appear in runtime contexts (e.g. the PathLike alias), not just stringized
+# annotations.
+ignore = ["UP007", "UP045"]
